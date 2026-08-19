@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LearningGoal extends Model
 {
- use HasFactory, HasUuids;
+ use HasFactory;
 
     public $incrementing = false;
 
