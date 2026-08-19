@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class ContentCatalog extends Model
 {
 
-use HasFactory, HasUuids;
+    use HasFactory;
 
     public $incrementing = false;
 
@@ -29,20 +29,19 @@ use HasFactory, HasUuids;
         'cost' => 'decimal:2',
     ];
 
-  public function learningGoals()
-{
-    return $this->belongsToMany(LearningGoal::class);
-}
+    public function learningGoals()
+    {
+        return $this->belongsToMany(LearningGoal::class);
+    }
 
-  public function procurementFeatures()
-{
-    return $this->belongsToMany(ProcurementFeature::class);
-}
+    public function procurementFeatures()
+    {
+        return $this->belongsToMany(ProcurementFeature::class);
+    }
 
 
-public function Language()
-{
-    return $this->belongsTo(Language::class);
-}
-
+    public function Language()
+    {
+        return $this->belongsTo(Language::class);
+    }
 }
