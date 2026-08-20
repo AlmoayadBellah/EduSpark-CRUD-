@@ -16,7 +16,7 @@ class ContentCatalogController extends Controller
     public function index()
     {
         $contentCatalogs = ContentCatalog::with([
-            'languages',
+            'language',
             'learningGoals',
             'procurementFeatures'
         ])->get();
@@ -29,12 +29,12 @@ class ContentCatalogController extends Controller
      */
     public function create()
     {
-        $languages = Language::all();
+        $language = Language::all();
         $learningGoals = LearningGoal::all();
         $procurementFeatures = ProcurementFeature::all();
 
         return view('content-catalogs.create', compact(
-            'languages',
+            'language',
             'learningGoals',
             'procurementFeatures'
         ));
@@ -46,23 +46,85 @@ class ContentCatalogController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'slug'=> ['required','string'],
-            'cost'=> ['required'],
-            'size'=> ['required'],
+            'title' => [
+                'required',
+                'string',
+                'max:255',
+            ],
 
-            'language_id' => ['required'],
-            
+            'description' => [
+                'required',
+                'string',
+            ],
 
-            'learning_goals' => ['nullable', 'array'],
-            'learning_goals.*' => ['exists:learning_goals,id'],
+            'slug' => [
+                'required',
+                'string',
+                'max:255',
+            ],
 
-            'procurement_features' => ['nullable', 'array'],
-            'procurement_features.*' => ['exists:procurement_features,id'],
+            'cost' => [
+                'required',
+                'numeric',
+                'min:0',
+            ],
+
+            'size' => [
+                'required',
+                'integer',
+                'min:0',
+            ],
+
+            'language_id' => [
+                'required',
+                'exists:languages,id',
+            ],
+
+            'learning_goals' => [
+                'nullable',
+                'array',
+            ],
+
+            'learning_goals.*' => [  'required',
+                'exists:learning_goals,id',
+            ],
+
+            'procurement_features' => [
+                'nullable',
+                'array',
+            ],
+
+            'procurement_features.*' => [
+                'exists:procurement_features,id',
+            ],
         ]);
 
         $contentCatalog = ContentCatalog::create([
+            'short_description' => $validated['description'],
+            'status' => 'enabled',
+            'slug' => $validated['slug'],
+            'language_id' => $validated['language_id'],
+            'size' => $validated['size'],
+            'cost' => $validated['cost'],
+        ]);
+
+        
+        $contentCatalog->learningGoals()->sync(
+            $validated['learning_goals'] ?? []
+        );
+
+        $contentCatalog->procurementFeatures()->sync(
+            $validated['procurement_features'] ?? []
+        );
+
+        return redirect()
+            ->route('content-catalogs.index')
+            ->with(
+                'success',
+                'Content Catalog created successfully.'
+            );
+    }
+          /*  $contentCatalog = ContentCatalog::create([
 
             'title' => $validated['title'],
             'short_description' => $validated['description'] ?? null,
@@ -90,6 +152,7 @@ class ContentCatalogController extends Controller
             ->route('content-catalogs.index')
             ->with('success', 'Content Catalog created successfully.');
     }
+            */
 
     /**
      * Display the specified resource.
@@ -97,7 +160,7 @@ class ContentCatalogController extends Controller
     public function show(string $id)
     {
         $contentCatalog = ContentCatalog::with([
-            'languages',
+            'language',
             'learningGoals',
             'procurementFeatures'
         ])->findOrFail($id);
@@ -111,7 +174,7 @@ class ContentCatalogController extends Controller
     public function edit(string $id)
     {
         $contentCatalog = ContentCatalog::with([
-            'languages',
+            'language',
             'learningGoals',
             'procurementFeatures'
         ])->findOrFail($id);
@@ -139,8 +202,7 @@ class ContentCatalogController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
 
-            'languages' => ['required', 'array'],
-            'languages.*' => ['exists:languages,id'],
+            'language_id' => ['required'],
 
             'learning_goals' => ['nullable', 'array'],
             'learning_goals.*' => ['exists:learning_goals,id'],
@@ -155,10 +217,6 @@ class ContentCatalogController extends Controller
         ]);
 
         // Update pivot tables
-        $contentCatalog->languages()->sync(
-            $validated['languages']
-        );
-
         $contentCatalog->learningGoals()->sync(
             $validated['learning_goals'] ?? []
         );
@@ -179,7 +237,7 @@ class ContentCatalogController extends Controller
     {
         $contentCatalog = ContentCatalog::findOrFail($id);
 
-        $contentCatalog->languages()->detach();
+        $contentCatalog->language();
         $contentCatalog->learningGoals()->detach();
         $contentCatalog->procurementFeatures()->detach();
 

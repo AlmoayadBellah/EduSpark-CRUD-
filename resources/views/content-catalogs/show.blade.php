@@ -36,19 +36,19 @@
 
                 <h5>Languages</h5>
 
-                @forelse($contentCatalog->languages as $language)
+                @if($contentCatalog->language)
 
                     <span class="badge bg-primary me-1">
-                        {{ $language->name }}
+                        {{ $contentCatalog->language->name }}
                     </span>
 
-                @empty
+                @else
 
                     <span class="text-muted">
                         No languages assigned.
                     </span>
 
-                @endforelse
+                @endif
 
             </div>
 

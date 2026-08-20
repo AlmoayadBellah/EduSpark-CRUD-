@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
         */
         $this->call([
             LanguageSeeder::class,
+            LearningGoalSeeder::class,
+            ProcurementFeatureSeeder::class
         ]);
     }
 }

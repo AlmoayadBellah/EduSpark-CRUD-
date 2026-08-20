@@ -22,6 +22,6 @@ class LearningGoal extends Model
 
        public function ContentCatalogs()
 {
-    return $this->belongsToMany(ContentCatalog::class);
+    return $this->belongsToMany(ContentCatalog::class, 'content_catalog_learning_goals');
 }
 }

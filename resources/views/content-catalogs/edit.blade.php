@@ -86,36 +86,25 @@
                 Languages
             </label>
 
-            @foreach($languages as $language)
+          <select
+        name="language_id"
+        id="language"
+        class="form-select"
+    >
 
-                <div class="form-check">
+        <option value="">
+            Select Language
+        </option>
 
-                    <input
-                        type="checkbox"
-                        name="languages[]"
-                        value="{{ $language->id }}"
-                        id="language-{{ $language->id }}"
-                        class="form-check-input"
+        @foreach($languages as $language)
 
-                        @checked(
-                            $contentCatalog->languages->contains(
-                                'id',
-                                $language->id
-                            )
-                        )
-                    >
+            <option value="{{ $language->id }}">
+                {{ $language->name }} ({{ $language->code }})
+            </option>
 
-                    <label
-                        for="language-{{ $language->id }}"
-                        class="form-check-label"
-                    >
-                        {{ $language->name }}
-                        ({{ $language->code }})
-                    </label>
+        @endforeach
 
-                </div>
-
-            @endforeach
+    </select>
 
         </div>
 

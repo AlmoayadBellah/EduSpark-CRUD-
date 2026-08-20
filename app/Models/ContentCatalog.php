@@ -5,20 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ContentCatalog extends Model
 {
 
     use HasFactory;
 
-    public $incrementing = false;
+   protected $table = 'content_catalogs';
 
-    protected $keyType = 'string';
+    protected $primaryKey = 'id';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
 
     protected $fillable = [
+      
+        'short_description',
         'status',
         'slug',
-        'short_description',
         'language_id',
         'size',
         'cost',
@@ -31,16 +38,25 @@ class ContentCatalog extends Model
 
     public function learningGoals()
     {
-        return $this->belongsToMany(LearningGoal::class);
+        return $this->belongsToMany(
+            LearningGoal::class,
+            'content_catalog_learning_goals'
+            
+        );
     }
 
     public function procurementFeatures()
     {
-        return $this->belongsToMany(ProcurementFeature::class);
+        return $this->belongsToMany(
+            ProcurementFeature::class,
+            'content_catalog_procurement_features',
+            'content_catalog_id',
+            'procurement_feature_id'
+        );
     }
 
 
-    public function Language()
+    public function Language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
     }

@@ -179,7 +179,7 @@
             Select Language
         </option>
 
-        @foreach($languages as $language)
+        @foreach($language as $language)
 
             <option value="{{ $language->id }}">
                 {{ $language->name }} ({{ $language->code }})
